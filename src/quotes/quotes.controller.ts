@@ -10,12 +10,11 @@ import {
   HttpCode,
   HttpStatus,
   Logger,
-  ValidationPipe,
 } from '@nestjs/common';
 import { QuotesService } from './quotes.service';
-import { CreateQuoteDto } from './dto/create-quote.dto';
 import { AnalysisResultDto } from './dto/analysis-result.dto';
 import { AIServiceClient } from '../ai-service/ai-service.client';
+import { AnalyzeQuotesDto } from './dto/analyze-quotes.dto';
 
 @Controller('quotes')
 export class QuotesController {
@@ -48,9 +47,9 @@ export class QuotesController {
   @Post('analyze')
   @HttpCode(HttpStatus.OK)
   async analyzeQuotes(
-    @Body('quotes', new ValidationPipe({ transform: true, whitelist: true }))
-    quotes: CreateQuoteDto[],
+    @Body() body: AnalyzeQuotesDto,
   ): Promise<AnalysisResultDto> {
+    const { quotes } = body;
     this.logger.log(`Requête d'analyse reçue : ${quotes.length} devis`);
 
     const result = await this.quotesService.analyzeQuotes(quotes);
